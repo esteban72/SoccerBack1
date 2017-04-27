@@ -1,13 +1,13 @@
 ﻿@model Domain.League
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Detalles";
 }
 
-<h2>Details</h2>
+<h2>Detalles</h2>
 
 <div>
-    <h4>League</h4>
+    <h4>Liga</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -23,12 +23,15 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Logo)
+            @if (!string.IsNullOrEmpty(Model.Logo))
+            {
+                <img src="@Url.Content(Model.Logo)" alt="Image" style="width:100px;height:100px;max-width: 100%; height: auto;" />
+            }
         </dd>
 
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.LeagueId }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Editar", "Edit", new { id = Model.LeagueId }, new { @class = "btn btn-warning" })
+    @Html.ActionLink("Volver a la lista", "Index", new { }, new { @class = "btn btn-success" })
 </p>

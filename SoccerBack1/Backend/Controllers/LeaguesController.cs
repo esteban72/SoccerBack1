@@ -1,9 +1,11 @@
-﻿using Backend.Models;
+﻿using Backend.Helpers;
+using Backend.Models;
 using Domain;
 using System.Data.Entity;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System;
 
 namespace Backend.Controllers
 {
@@ -12,20 +14,18 @@ namespace Backend.Controllers
     {
         private DataContextLocal db = new DataContextLocal();
 
-        // GET: Leagues
         public async Task<ActionResult> Index()
         {
             return View(await db.Leagues.ToListAsync());
         }
 
-        // GET: Leagues/Details/5
         public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            League league = await db.Leagues.FindAsync(id);
+            var league = await db.Leagues.FindAsync(id);
             if (league == null)
             {
                 return HttpNotFound();
@@ -44,16 +44,37 @@ namespace Backend.Controllers
         // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "LeagueId,Name,Logo")] League league)
+        public async Task<ActionResult> Create(LeagueView view)
         {
             if (ModelState.IsValid)
             {
+                var pic = string.Empty;
+                var folder = "~/Content/Logos";
+
+                if (view.LogoFile != null)
+                {
+                    pic = FilesHelper.UploadPhoto(view.LogoFile, folder);
+                    pic = string.Format("{0}/{1}", folder, pic);
+                }
+                var league = ToLeague(view);
+                league.Logo = pic;
                 db.Leagues.Add(league);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
-            return View(league);
+            return View(view);
+        }
+
+        private League ToLeague(LeagueView view)
+        {
+            return new League
+            {
+                LeagueId = view.LeagueId,
+                Logo = view.Logo,
+                Name = view.Name,
+                Teams = view.Teams,
+            };
         }
 
         // GET: Leagues/Edit/5
@@ -63,12 +84,24 @@ namespace Backend.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            League league = await db.Leagues.FindAsync(id);
+            var league = await db.Leagues.FindAsync(id);
             if (league == null)
             {
                 return HttpNotFound();
             }
-            return View(league);
+            var view = ToView(league);
+            return View(view);
+        }
+
+        private LeagueView ToView(League league)
+        {
+            return new LeagueView
+            {
+                LeagueId = league.LeagueId,
+                Logo = league.Logo,
+                Name = league.Name,
+                Teams = league.Teams,
+            };
         }
 
         // POST: Leagues/Edit/5
@@ -76,15 +109,25 @@ namespace Backend.Controllers
         // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "LeagueId,Name,Logo")] League league)
+        public async Task<ActionResult> Edit(LeagueView view)
         {
             if (ModelState.IsValid)
             {
+                var pic = view.Logo;
+                var folder = "~/Content/Logos";
+
+                if (view.LogoFile != null)
+                {
+                    pic = FilesHelper.UploadPhoto(view.LogoFile, folder);
+                    pic = string.Format("{0}/{1}", folder, pic);
+                }
+                var league = ToLeague(view);
+                league.Logo = pic;
                 db.Entry(league).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View(league);
+            return View(view);
         }
 
         // GET: Leagues/Delete/5

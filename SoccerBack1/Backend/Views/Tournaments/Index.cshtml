@@ -7,7 +7,7 @@
 <h2>Torneos</h2>
 
 <p>
-    @Html.ActionLink("Crear nuevo", "Create")
+    @Html.ActionLink("Crear Nuevo", "Create", new { }, new { @class = "btn btn-primary" })
 </p>
 <table class="table">
     <tr>
@@ -29,9 +29,9 @@
             @Html.DisplayFor(modelItem => item.Logo)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.TournamentId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.TournamentId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.TournamentId })
+            @Html.ActionLink("Editar", "Edit", new { id = item.TournamentId }, new { @class = "btn btn-warning" })
+            @Html.ActionLink("Detalle", "Details", new { id = item.TournamentId }, new { @class = "btn btn-info" })
+            @Html.ActionLink("Eliminar", "Delete", new { id = item.TournamentId }, new { @class = "btn btn-danger" })
         </td>
     </tr>
 }
