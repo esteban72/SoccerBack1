@@ -51,7 +51,7 @@ namespace Backend.Controllers
         // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "TournamentGroupId,Name,TournamentId")] TournamentGroup tournamentGroup)
+        public async Task<ActionResult> Create(TournamentGroup tournamentGroup)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace Backend.Controllers
         // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "TournamentGroupId,Name,TournamentId")] TournamentGroup tournamentGroup)
+        public async Task<ActionResult> Edit(TournamentGroup tournamentGroup)
         {
             if (ModelState.IsValid)
             {
