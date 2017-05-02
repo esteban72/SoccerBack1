@@ -196,12 +196,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\DatesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LeaguesController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\TeamsController.cs" />
-    <Compile Include="Controllers\TournamentGroupsController.cs" />
     <Compile Include="Controllers\TournamentsController.cs" />
+    <Compile Include="Controllers\TournamentTeamsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -213,6 +213,7 @@
     <Compile Include="Models\LeagueView.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\TeamView.cs" />
+    <Compile Include="Models\TournamentTeamView.cs" />
     <Compile Include="Models\TournamentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -280,24 +281,29 @@
     <Content Include="Views\Leagues\Details.cshtml" />
     <Content Include="Views\Leagues\Edit.cshtml" />
     <Content Include="Views\Leagues\Index.cshtml" />
-    <Content Include="Views\Teams\Create.cshtml" />
-    <Content Include="Views\Teams\Delete.cshtml" />
-    <Content Include="Views\Teams\Details.cshtml" />
-    <Content Include="Views\Teams\Edit.cshtml" />
-    <Content Include="Views\Teams\Index.cshtml" />
     <Content Include="Views\Tournaments\Create.cshtml" />
     <Content Include="Views\Tournaments\Delete.cshtml" />
     <Content Include="Views\Tournaments\Details.cshtml" />
     <Content Include="Views\Tournaments\Edit.cshtml" />
     <Content Include="Views\Tournaments\Index.cshtml" />
-    <Content Include="Views\TournamentGroups\Create.cshtml" />
-    <Content Include="Views\TournamentGroups\Delete.cshtml" />
-    <Content Include="Views\TournamentGroups\Details.cshtml" />
-    <Content Include="Views\TournamentGroups\Edit.cshtml" />
-    <Content Include="Views\TournamentGroups\Index.cshtml" />
     <Content Include="Views\Tournaments\CreateGroup.cshtml" />
     <Content Include="Views\Tournaments\EditGroup.cshtml" />
     <Content Include="Views\Leagues\CreateTeam.cshtml" />
+    <Content Include="Views\Leagues\EditTeam.cshtml" />
+    <Content Include="Views\Dates\Create.cshtml" />
+    <Content Include="Views\Dates\Delete.cshtml" />
+    <Content Include="Views\Dates\Details.cshtml" />
+    <Content Include="Views\Dates\Edit.cshtml" />
+    <Content Include="Views\Dates\Index.cshtml" />
+    <Content Include="Views\Tournaments\CreateDate.cshtml" />
+    <Content Include="Views\Tournaments\EditDate.cshtml" />
+    <Content Include="Views\TournamentTeams\Create.cshtml" />
+    <Content Include="Views\TournamentTeams\Delete.cshtml" />
+    <Content Include="Views\TournamentTeams\Details.cshtml" />
+    <Content Include="Views\TournamentTeams\Edit.cshtml" />
+    <Content Include="Views\TournamentTeams\Index.cshtml" />
+    <Content Include="Views\Tournaments\DetailsGroup.cshtml" />
+    <Content Include="Views\Tournaments\CreateTeam.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

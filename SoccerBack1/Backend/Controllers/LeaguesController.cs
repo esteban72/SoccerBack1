@@ -56,6 +56,61 @@ namespace Backend.Controllers
             return View(view);
         }
 
+        public async Task<ActionResult> EditTeam(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var team = await db.Teams.FindAsync(id);
+            if (team == null)
+            {
+                return HttpNotFound();
+            }
+            var view = ToView(team);
+            return View(view);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditTeam(TeamView view)
+        {
+            if (ModelState.IsValid)
+            {
+                var pic = view.Logo;
+                var folder = "~/Content/Logos";
+
+                if (view.LogoFile != null)
+                {
+                    pic = FilesHelper.UploadPhoto(view.LogoFile, folder);
+                    pic = string.Format("{0}/{1}", folder, pic);
+                }
+                var team = ToTeam(view);
+                team.Logo = pic;
+                db.Entry(team).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction(string.Format("Details/{0}", view.LeagueId));
+            }
+
+            return View(view);
+        }
+
+        public async Task<ActionResult> DeleteTeam(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var team = await db.Teams.FindAsync(id);
+            if (team == null)
+            {
+                return HttpNotFound();
+            }
+            db.Teams.Remove(team);
+            await db.SaveChangesAsync();
+            return RedirectToAction(string.Format("Details/{0}", team.LeagueId));
+        }
+
         private Team ToTeam(TeamView view)
         {
             return new Team

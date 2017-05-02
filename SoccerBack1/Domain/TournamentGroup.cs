@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain
@@ -19,5 +20,8 @@ namespace Domain
         public int TournamentId { get; set; }
 
         public virtual Tournament Tournament { get; set; }
+
+        public virtual ICollection<TournamentTeam> TournamentTeams { get; set; }
+
     }
 }

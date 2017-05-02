@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using System;
 using Backend.Helpers;
+using System.Linq;
 
 namespace Backend.Controllers
 {
@@ -15,6 +16,129 @@ namespace Backend.Controllers
         private DataContextLocal db = new DataContextLocal();
 
         
+
+        public async Task<ActionResult> CreateTeam(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var tournamentGroup = await db.TournamentGroups.FindAsync(id);
+            if (tournamentGroup == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.LeagueId = new SelectList(db.Leagues.OrderBy(t => t.Name), "LeagueId", "Name");
+            ViewBag.TeamId = new SelectList(db.Teams.Where(t => t.LeagueId == db.Leagues.FirstOrDefault().LeagueId).OrderBy(t => t.Name), "TeamId", "Name");
+            var view = new TournamentTeamView { TournamentGroupId = tournamentGroup.TournamentGroupId };
+            return View(view);
+        }
+
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateTeam(TournamentTeam tournamentTeam)
+        {
+            if (ModelState.IsValid)
+            {
+                db.TournamentTeams.Add(tournamentTeam);
+                await db.SaveChangesAsync();
+                return RedirectToAction(string.Format("DetailsGroup/{0}", tournamentTeam.TournamentGroupId));
+            }
+
+            ViewBag.TeamId = new SelectList(db.Teams.OrderBy(t => t.Name), "TeamId", "Name", tournamentTeam.TeamId);
+            return View(tournamentTeam);
+        }
+
+
+        public async Task<ActionResult> CreateDate(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var tournament = await db.Tournaments.FindAsync(id);
+            if (tournament == null)
+            {
+                return HttpNotFound();
+            }
+            var view = new Date { TournamentId = tournament.TournamentId, };
+            return View(view);
+        }
+
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateDate(Date date)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Dates.Add(date);
+                await db.SaveChangesAsync();
+                return RedirectToAction(string.Format("Details/{0}", date.TournamentId));
+            }
+            return View(date);
+        }
+
+        public async Task<ActionResult> EditDate(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var date = await db.Dates.FindAsync(id);
+            if (date == null)
+            {
+                return HttpNotFound();
+            }
+            return View(date);
+        }
+
+       
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditDate(Date date)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(date).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction(string.Format("Details/{0}", date.TournamentId));
+            }            
+            return View(date);
+        }
+
+        public async Task<ActionResult> DeleteDate(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var date = await db.Dates.FindAsync(id);
+            if (date == null)
+            {
+                return HttpNotFound();
+            }
+            db.Dates.Remove(date);
+            await db.SaveChangesAsync();
+            return RedirectToAction(string.Format("Details/{0}", date.TournamentId));
+            
+        }
+
+        public async Task<ActionResult> DetailsGroup(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var tournamentGroup = await db.TournamentGroups.FindAsync(id);
+            if (tournamentGroup == null)
+            {
+                return HttpNotFound();
+            }
+            return View(tournamentGroup);
+        }
+
         public async Task<ActionResult> CreateGroup(int? id)
         {
             if (id == null)
@@ -30,9 +154,7 @@ namespace Backend.Controllers
             return View(view);
         }
 
-        // POST: TournamentGroups/Create
-        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
-        // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateGroup(TournamentGroup tournamentGroup)
@@ -52,7 +174,7 @@ namespace Backend.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TournamentGroup tournamentGroup = await db.TournamentGroups.FindAsync(id);
+            var tournamentGroup = await db.TournamentGroups.FindAsync(id);
             if (tournamentGroup == null)
             {
                 return HttpNotFound();
@@ -81,7 +203,7 @@ namespace Backend.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TournamentGroup tournamentGroup = await db.TournamentGroups.FindAsync(id);
+            var tournamentGroup = await db.TournamentGroups.FindAsync(id);
             if (tournamentGroup == null)
             {
                 return HttpNotFound();
@@ -187,9 +309,7 @@ namespace Backend.Controllers
             };
         }
 
-        // POST: Tournaments/Edit/5
-        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
-        // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(TournamentView view)

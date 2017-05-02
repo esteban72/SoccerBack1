@@ -50,11 +50,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataContext.cs" />
+    <Compile Include="Date.cs" />
     <Compile Include="League.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Team.cs" />
     <Compile Include="Tournament.cs" />
     <Compile Include="TournamentGroup.cs" />
+    <Compile Include="TournamentTeam.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

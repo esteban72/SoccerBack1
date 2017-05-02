@@ -25,5 +25,8 @@ namespace Domain
         public int Order { get; set; }
 
         public virtual ICollection<TournamentGroup> Groups { get; set; }
+
+        public virtual ICollection<Date> Dates { get; set; }
+
     }
 }
