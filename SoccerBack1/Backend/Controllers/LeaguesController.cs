@@ -14,6 +14,74 @@ namespace Backend.Controllers
     {
         private DataContextLocal db = new DataContextLocal();
 
+        public async Task<ActionResult> CreateTeam(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var league = await db.Leagues.FindAsync(id);
+            if (league == null)
+            {
+                return HttpNotFound();
+            }
+            var view = new TeamView { LeagueId = league.LeagueId };
+            return View(view);
+        }
+
+        // POST: Teams/Create
+        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
+        // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateTeam(TeamView view)
+        {
+            if (ModelState.IsValid)
+            {
+                var pic = string.Empty;
+                var folder = "~/Content/Logos";
+
+                if (view.LogoFile != null)
+                {
+                    pic = FilesHelper.UploadPhoto(view.LogoFile, folder);
+                    pic = string.Format("{0}/{1}", folder, pic);
+                }
+                var team = ToTeam(view);
+                team.Logo = pic;
+                db.Teams.Add(team);
+                await db.SaveChangesAsync();
+                return RedirectToAction(string.Format("Details/{0}", view.LeagueId));
+            }
+            
+            return View(view);
+        }
+
+        private Team ToTeam(TeamView view)
+        {
+            return new Team
+            {
+                Initials = view.Initials,
+                League = view.League,
+                LeagueId = view.LeagueId,
+                Logo = view.Logo,
+                Name = view.Name,
+                TeamId = view.TeamId,
+            };
+        }
+
+        private TeamView ToView(Team team)
+        {
+            return new TeamView
+            {
+                Initials = team.Initials,
+                League = team.League,
+                LeagueId = team.LeagueId,
+                Logo = team.Logo,
+                Name = team.Name,
+                TeamId = team.TeamId,
+            };
+        }
+
         public async Task<ActionResult> Index()
         {
             return View(await db.Leagues.ToListAsync());

@@ -14,27 +14,7 @@ namespace Backend.Controllers
     {
         private DataContextLocal db = new DataContextLocal();
 
-        // GET: Tournaments
-        public async Task<ActionResult> Index()
-        {
-            return View(await db.Tournaments.ToListAsync());
-        }
-
-        // GET: Tournaments/Details/5
-        public async Task<ActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            var tournament = await db.Tournaments.FindAsync(id);
-            if (tournament == null)
-            {
-                return HttpNotFound();
-            }
-            return View(tournament);
-        }
-
+        
         public async Task<ActionResult> CreateGroup(int? id)
         {
             if (id == null)
@@ -109,6 +89,27 @@ namespace Backend.Controllers
             db.TournamentGroups.Remove(tournamentGroup);
             await db.SaveChangesAsync();
             return RedirectToAction(string.Format("Details/{0}", tournamentGroup.TournamentId));
+        }
+
+        // GET: Tournaments
+        public async Task<ActionResult> Index()
+        {
+            return View(await db.Tournaments.ToListAsync());
+        }
+
+        // GET: Tournaments/Details/5
+        public async Task<ActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var tournament = await db.Tournaments.FindAsync(id);
+            if (tournament == null)
+            {
+                return HttpNotFound();
+            }
+            return View(tournament);
         }
 
         // GET: Tournaments/Create

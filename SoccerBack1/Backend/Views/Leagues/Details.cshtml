@@ -32,6 +32,53 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Editar", "Edit", new { id = Model.LeagueId }, new { @class = "btn btn-warning" })
+    @Html.ActionLink("Editar Liga", "Edit", new { id = Model.LeagueId }, new { @class = "btn btn-warning" })
+    @Html.ActionLink("Crear Equipo", "CreateTeam", new { id = Model.LeagueId }, new { @class = "btn btn-primary" })
     @Html.ActionLink("Volver a la lista", "Index", new { }, new { @class = "btn btn-success" })
 </p>
+<h4>Equipos</h4>
+@if (Model.Teams.Count == 0)
+{
+    <h5>No hay equipos registrados todavía</h5>
+}
+else
+{
+    <table class="table">
+        <tr>            
+            <th>
+                @Html.DisplayNameFor(model => model.Teams.FirstOrDefault().Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Teams.FirstOrDefault().Logo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Teams.FirstOrDefault().Initials)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.Teams.OrderBy(t => t.Name))
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.Logo))
+                    {
+                        <img src="@Url.Content(item.Logo)" alt="Image" style="width:80px;height:80px;max-width: 100%; height: auto;" />
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Initials)
+                </td>
+                <td>
+                    @Html.ActionLink("Editar", "EditTeam", new { id = item.TeamId }, new { @class = "btn btn-warning" })
+                    @Html.ActionLink("Detalle", "DetailsTeam", new { id = item.TeamId }, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Eliminar", "DeleteTeam", new { id = item.TeamId }, new { @class = "btn btn-danger", onclick = "return confirm('Esta seguro que desea eliminar este elemento?');" })
+                </td>
+            </tr>
+        }
+
+    </table>
+}

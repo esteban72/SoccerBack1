@@ -67,7 +67,7 @@ namespace Backend.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.LeagueId = new SelectList(db.Leagues, "LeagueId", "Name", view.LeagueId);
+ 
             return View(view);
         }
 
