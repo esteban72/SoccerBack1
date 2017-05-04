@@ -1,14 +1,14 @@
 ﻿@model Domain.TournamentGroup
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Grupo/torneo";
 }
 
 <h2>Torneo: @Model.Tournament.Name</h2>
 <h3>Grupo: @Model.Name</h3>
 <p>
     @Html.ActionLink("Crear nuevo", "CreateTeam", new { id = Model.TournamentGroupId }, new { @class = "btn btn-primary" })
-    @Html.ActionLink("Volver al torneo", "Details", new { id = Model.TournamentId }, new { @class = "btn btn-success" })
+    @Html.ActionLink("Volver al grupo", "Details", new { id = Model.TournamentId }, new { @class = "btn btn-success" })
 </p>
 @if (Model.TournamentTeams.Count == 0)
 {

@@ -13,6 +13,8 @@ namespace Domain
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
+            modelBuilder.Configurations.Add(new UsersMap());
+            modelBuilder.Configurations.Add(new MatchesMap());
         }
 
 

@@ -91,6 +91,9 @@
                     <th>
                         @Html.DisplayNameFor(model => model.Dates.FirstOrDefault().Name)
                     </th>
+                    <th>
+                        # Partidos
+                    </th>
                     <th></th>
                 </tr>
 
@@ -99,6 +102,9 @@
                     <tr>
                         <td>
                             @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Matches.Count)
                         </td>
                         <td>
                             @Html.ActionLink("Editar", "EditDate", new { id = item.DateId }, new { @class = "btn btn-warning" })
