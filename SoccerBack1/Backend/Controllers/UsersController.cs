@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
+﻿using Backend.Helpers;
 using Backend.Models;
 using Domain;
+using System.Data.Entity;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+using System;
+using Backend.Classes;
 
 namespace Backend.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private DataContextLocal db = new DataContextLocal();
@@ -42,28 +41,52 @@ namespace Backend.Controllers
         // GET: Users/Create
         public ActionResult Create()
         {
-            ViewBag.FavoriteTeamId = new SelectList(db.Teams, "TeamId", "Name");
-            ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "Name");
+            ViewBag.FavoriteLeagueId = new SelectList(db.Leagues.OrderBy(l => l.Name), "LeagueId", "Name");
+            ViewBag.FavoriteTeamId = new SelectList(db.Teams.Where(t => t.LeagueId == db.Leagues.FirstOrDefault().LeagueId), "TeamId", "Name");
+            ViewBag.UserTypeId = new SelectList(db.UserTypes.OrderBy(ut => ut.Name), "UserTypeId", "Name");
             return View();
         }
-
-        // POST: Users/Create
-        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
-        // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "UserId,FirstName,LastName,UserTypeId,Picture,Email,NickName,FavoriteTeamId,Points")] User user)
+        public async Task<ActionResult> Create(UserView view)
         {
             if (ModelState.IsValid)
             {
+                var pic = string.Empty;
+                var folder = "~/Content/Users";
+
+                if (view.PictureFile != null)
+                {
+                    pic = FilesHelper.UploadPhoto(view.PictureFile, folder);
+                    pic = string.Format("{0}/{1}", folder, pic);
+                }
+                var user = ToUser(view);
+                user.Picture = pic;
                 db.Users.Add(user);
                 await db.SaveChangesAsync();
+                UsersHelper.CreateUserASP(view.Email, "User", view.Password);
                 return RedirectToAction("Index");
             }
+            ViewBag.FavoriteLeagueId = new SelectList(db.Leagues.OrderBy(l => l.Name), "LeagueId", "Name", view.FavoriteLeagueId);
+            ViewBag.FavoriteTeamId = new SelectList(db.Teams.Where(t => t.LeagueId == db.Leagues.FirstOrDefault().LeagueId), "TeamId", "Name", view.FavoriteTeamId);
+            ViewBag.UserTypeId = new SelectList(db.UserTypes.OrderBy(ut => ut.Name), "UserTypeId", "Name", view.UserTypeId);
+            return View(view);
+        }
 
-            ViewBag.FavoriteTeamId = new SelectList(db.Teams, "TeamId", "Name", user.FavoriteTeamId);
-            ViewBag.UserTypeId = new SelectList(db.UserTypes, "UserTypeId", "Name", user.UserTypeId);
-            return View(user);
+        private User ToUser(UserView view)
+        {
+            return new User {
+                UserId = view.UserId,
+                FirstName = view.FirstName,
+                LastName = view.LastName,
+                UserTypeId = view.UserTypeId,
+                Picture = view.Picture,
+                Email = view.Email,
+                NickName = view.NickName,
+                FavoriteTeamId = view.FavoriteTeamId,
+                Points = view.Points,
+            };
         }
 
         // GET: Users/Edit/5
@@ -88,7 +111,7 @@ namespace Backend.Controllers
         // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "UserId,FirstName,LastName,UserTypeId,Picture,Email,NickName,FavoriteTeamId,Points")] User user)
+        public async Task<ActionResult> Edit(User user)
         {
             if (ModelState.IsValid)
             {

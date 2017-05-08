@@ -5,11 +5,10 @@ using System.Data.Entity;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using System;
 
 namespace Backend.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class LeaguesController : Controller
     {
         private DataContextLocal db = new DataContextLocal();

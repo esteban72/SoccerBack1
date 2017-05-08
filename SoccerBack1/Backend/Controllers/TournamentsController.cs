@@ -1,16 +1,16 @@
-﻿using Backend.Models;
+﻿using Backend.Helpers;
+using Backend.Models;
 using Domain;
+using System;
 using System.Data.Entity;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using System;
-using Backend.Helpers;
-using System.Linq;
 
 namespace Backend.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class TournamentsController : Controller
     {
         private DataContextLocal db = new DataContextLocal();
@@ -372,6 +372,95 @@ namespace Backend.Controllers
                 TournamentGroupId = view.TournamentGroupId,
                 VisitorId = view.VisitorId, 
             };
+        }
+
+        public async Task<ActionResult> EditMatch(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var match = await db.Matches.FindAsync(id);
+            if (match == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.StatusId = new SelectList(db.Status, "StatusId", "Name", match.StatusId);
+            ViewBag.LocalLeagueId = new SelectList(db.Leagues.OrderBy(t => t.Name), "LeagueId", "Name", match.Local.LeagueId);
+            ViewBag.LocalId = new SelectList(db.Teams.Where(t => t.LeagueId == match.Local.LeagueId).OrderBy(t => t.Name), "TeamId", "Name", match.LocalId);
+
+            ViewBag.VisitorLeagueId = new SelectList(db.Leagues.OrderBy(t => t.Name), "LeagueId", "Name", match.Visitor.LeagueId);
+            ViewBag.VisitorId = new SelectList(db.Teams.Where(t => t.LeagueId == match.Visitor.LeagueId).OrderBy(t => t.Name), "TeamId", "Name", match.VisitorId);
+            ViewBag.TournamentGroupId = new SelectList(db.TournamentGroups.Where(tg => tg.TournamentId == match.Date.TournamentId).OrderBy(tg => tg.Name), "TournamentGroupId", "Name", match.TournamentGroupId);
+            var view = ToView(match);
+            return View(view);
+        }
+
+        private MatchView ToView(Match match)
+        {
+            return new MatchView
+            {
+                DateId = match.DateId,
+                DateTime = match.DateTime,
+                LocalId = match.LocalId,
+                StatusId = match.StatusId,
+                TournamentGroupId = match.TournamentGroupId,
+                VisitorId = match.VisitorId,
+            };
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditMatch(MatchView view)
+        {
+            if (ModelState.IsValid)
+            {
+                view.DateTime = Convert.ToDateTime(string.Format("{0} {1}", view.DateString, view.TimeString));
+                var match = ToMatch1(view);
+                db.Entry(match).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction(string.Format("DetailsDate/{0}", view.DateId));
+            }
+            ViewBag.StatusId = new SelectList(db.Status, "StatusId", "Name", view.StatusId);
+            ViewBag.LocalLeagueId = new SelectList(db.Leagues.OrderBy(t => t.Name), "LeagueId", "Name", view.Local.LeagueId);
+            ViewBag.LocalId = new SelectList(db.Teams.Where(t => t.LeagueId == view.Local.LeagueId).OrderBy(t => t.Name), "TeamId", "Name", view.LocalId);
+
+            ViewBag.VisitorLeagueId = new SelectList(db.Leagues.OrderBy(t => t.Name), "LeagueId", "Name", view.Visitor.LeagueId);
+            ViewBag.VisitorId = new SelectList(db.Teams.Where(t => t.LeagueId == view.Visitor.LeagueId).OrderBy(t => t.Name), "TeamId", "Name", view.VisitorId);
+            ViewBag.TournamentGroupId = new SelectList(db.TournamentGroups.Where(tg => tg.TournamentId == view.Date.TournamentId).OrderBy(tg => tg.Name), "TournamentGroupId", "Name", view.TournamentGroupId);
+            return View(view);
+        }
+
+        private Match ToMatch1(MatchView view)
+        {
+            return new Match
+            {
+                DateId = view.DateId,
+                DateTime = view.DateTime,
+                LocalId = view.LocalId,
+                StatusId = view.StatusId,
+                MatchId = view.MatchId,
+                LocalGoals = view.LocalGoals,
+                VisitorGoals = view.VisitorGoals,
+                TournamentGroupId = view.TournamentGroupId,
+                VisitorId = view.VisitorId,
+            };
+        }
+
+        public async Task<ActionResult> DeleteMatch(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var match = await db.Matches.FindAsync(id);
+            if (match == null)
+            {
+                return HttpNotFound();
+            }
+            db.Matches.Remove(match);
+            await db.SaveChangesAsync();
+            return RedirectToAction(string.Format("DetailsDate/{0}", match.DateId));
         }
 
         public async Task<ActionResult> Index()

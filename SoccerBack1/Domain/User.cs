@@ -34,6 +34,7 @@ namespace Domain
         [MaxLength(50, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres")]
         [DataType(DataType.EmailAddress)]
         [Index("User_Email_Index", IsUnique = true)]
+        //[RegularExpression("\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\b", ErrorMessage = "Mail incorrecto, verifique que no tenga caracteres especiales")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido")]
@@ -52,11 +53,11 @@ namespace Domain
 
         public virtual Team FavoriteTeam { get; set; }
 
-        //public virtual ICollection<Group> UserGroups { get; set; }
+        public virtual ICollection<Group> UserGroups { get; set; }
 
-        //public virtual ICollection<GroupUser> GroupUsers { get; set; }
+        public virtual ICollection<GroupUser> GroupUsers { get; set; }
 
-        //public virtual ICollection<Prediction> Predictions { get; set; }
+        public virtual ICollection<Prediction> Predictions { get; set; }
     }
 
 }

@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using Backend.Models;
+using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace Domain
@@ -13,8 +14,10 @@ namespace Domain
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
-            modelBuilder.Configurations.Add(new UsersMap());
             modelBuilder.Configurations.Add(new MatchesMap());
+            modelBuilder.Configurations.Add(new GroupsMap());
+            modelBuilder.Configurations.Add(new UsersMap());
+
         }
 
 

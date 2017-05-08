@@ -11,7 +11,7 @@ namespace Backend.Controllers
         public JsonResult GetTeams(int leagueId)
         {
             db.Configuration.ProxyCreationEnabled = false;
-            var teams = db.Teams.Where(m => m.LeagueId == leagueId);
+            var teams = db.Teams.Where(m => m.LeagueId == leagueId).OrderBy(t => t.Name);
             return Json(teams);
         }
 

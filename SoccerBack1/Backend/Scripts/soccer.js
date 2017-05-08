@@ -66,3 +66,26 @@ $(document).ready(function () {
         return false;
     });
 });
+
+$(document).ready(function () {
+    $("#FavoriteLeagueId").change(function () {
+        $("#FavoriteTeamId").empty();
+        $.ajax({
+            type: 'POST',
+            url: Url,
+            dataType: 'json',
+            data: { leagueId: $("#FavoriteLeagueId").val() },
+            success: function (teams) {
+                $.each(teams, function (i, team) {
+                    $("#FavoriteTeamId").append('<option value="'
+                     + team.TeamId + '">'
+                     + team.Name + '</option>');
+                });
+            },
+            error: function (ex) {
+                alert('Error en recuperar los equipos.' + ex);
+            }
+        });
+        return false;
+    });
+});

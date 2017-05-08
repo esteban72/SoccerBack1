@@ -15,6 +15,9 @@
             @Html.DisplayNameFor(model => model.FavoriteTeam.Name)
         </th>
         <th>
+
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.UserType.Name)
         </th>
         <th>
@@ -44,6 +47,12 @@
             @Html.DisplayFor(modelItem => item.FavoriteTeam.Name)
         </td>
         <td>
+            @if (!string.IsNullOrEmpty(item.FavoriteTeam.Logo))
+            {
+                <img src="@Url.Content(item.FavoriteTeam.Logo)" alt="Image" style="width:80px;height:80px;max-width: 100%; height: auto;" />
+            }
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.UserType.Name)
         </td>
         <td>
@@ -53,7 +62,10 @@
             @Html.DisplayFor(modelItem => item.LastName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Picture)
+            @if (!string.IsNullOrEmpty(item.Picture))
+            {
+                <img src="@Url.Content(item.Picture)" alt="Image" style="width:80px;height:80px;max-width: 100%; height: auto;" />
+            }
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Email)
