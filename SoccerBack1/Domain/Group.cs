@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -22,8 +23,10 @@ namespace Domain
         [Display(Name = "Usuario")]
         public int OwnerId { get; set; }
 
+        [JsonIgnore]
         public virtual User Owner { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<GroupUser> GroupUsers { get; set; }
     }
 

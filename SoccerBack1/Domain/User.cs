@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -49,14 +50,19 @@ namespace Domain
         [Display(Name = "Puntos")]
         public int Points { get; set; }
 
+        [JsonIgnore]
         public virtual UserType UserType { get; set; }
 
+        [JsonIgnore]
         public virtual Team FavoriteTeam { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Group> UserGroups { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<GroupUser> GroupUsers { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Prediction> Predictions { get; set; }
     }
 

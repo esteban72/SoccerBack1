@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain
@@ -33,14 +34,19 @@ namespace Domain
         [Display(Name = "Grupo")]
         public int TournamentGroupId { get; set; }
 
+        [JsonIgnore]
         public virtual Date Date { get; set; }
-        
+
+        [JsonIgnore]
         public virtual Team Local { get; set; }
-        
+
+        [JsonIgnore]
         public virtual Team Visitor { get; set; }
 
+        [JsonIgnore]
         public virtual Status Status { get; set; }
 
+        [JsonIgnore]
         public virtual TournamentGroup TournamentGroup { get; set; }
 
     }
